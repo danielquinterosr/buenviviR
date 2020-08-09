@@ -1,0 +1,453 @@
+---
+title: "Taller de Introducción al uso de R en Ciencias Sociales"
+author: "Daniel Quinteros (@dquinterosr)"
+date: "6/8/2020"
+output:
+  html_document:
+    toc: yes
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
+---
+
+
+
+![](/Users/danielquinterosr/Google Drive/UNAP/Cursos/Estadistica/buenviviR/banner_talleR.png)
+Hola, bienvenidos al taller que te permitirá introducirte en el mundo de R y R Studio.
+
+Este es un documento RMarkdown, que permite combinar distintos lenguajes de programación, para procesar, analizar y presentar información en un sólo y mismo documento.
+
+Todo lo que se escribe en esta parte del código, está configurado para lenguaje html y pueden usar algunas funciones básicas que son muy útiles, como usar **negritas** o *cursivas*. Más info: https://markdown.es/sintaxis-markdown/
+
+Por lo anterior, para agregar un código R a este documento, se debe insertar un "chunk" (trozo, pedazo) del respectivo código. Puedes usar Ctrl+Alt+I (Cmd+Alt+I en mac) o ir a la parte superior derecha y seleccionar "Insert" -> "R"
+
+Vamos a utilizar los mismos códigos de las sesiones anteriores.
+
+> Si no pudiste asistir a la clase en vivo, puedes verla nuevamente y seguir los ejercicios. Los archivos los puedes encontrar en: https://github.com/danielquinterosr/buenviviR
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/zfFFzyUbqP0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+## MÓDULO 1. CREACIÓN Y MANIPULACIÓN DE BASES DE DATOS 
+
+El informe **"Mujeres en Chile y Mercado del Trabajo: Participación laboral femenina y brechas salariales"**, señala que: 
+
+> "La distribución por sexo según grupo ocupacional(43)  muestra una concentración femenina en los grupos de Trabajadores No Calificados (26,5%) y de Trabajadores de los Servicios (23,4%), además de una concentración masculina en los grupos de Oficiales, Operarios y Artesanos de Artes Mecánicas y Otros Oficios (20,3%), Trabajadores No Calificados (19,5%), y Operadores de Instalaciones, Máquinas y Montadores (14,7%)". (INE,2019)
+
+### PASO 1. VARIABLES 
+Crear las variables a incluir en nuestra tabla de datos: *Grupo ocupacional, Mujer y Hombre.*
+```{r, warning=FALSE}
+
+
+grupo.ocupacion <- c("Miembros del Poder Ejecutivo", "Profesionales, Científicos e Intelectuales", 
+                     "Técnicos y Profesionales de Nivel Medio","Empleados de Oficina", "Trabajadores de los Servicios",
+                     "Agricultores y Trabajadores Calificados","Oficiales, Operarios y Artesanos de Artes Mecánicas",
+                     "Operadores de Instalaciones y Máquinas y Montadores","Trabajadores no Calificados", 
+                     "Otros no identificados","Total")
+mujer <- c(45615,417702,383275,433708,725169,54674,159689,55349,822600,7160,3104942)
+hombre <- c(140008,429077,411013,255745,342866,235392,830347,601922,797429,50397,4094196)
+```
+
+### PASO 2. TABLA DE DATOS 
+Generar una tabla de datos (data frame), a partir del factor y los vectores (variables) grupo.ocupacion, hombre y mujer. 
+```{r, warning=FALSE}
+ocupacion.sexo <- data.frame(grupo.ocupacion,mujer,hombre)
+```
+
+### PASO 3. VISUALIZACIÓN
+Función View() debe ser puesta como texto "#" o eliminada en RMarkdown 
+```{r, warning=FALSE}
+
+print(ocupacion.sexo) #para imprimir la tabla básica en el documento. 
+## View(ocupacion.sexo) #para visualizar en una nueva pestaña
+```
+
+### PASO 4. MANIPULACIÓN DE VARIABLES
+A. Crear dos variables más, que contengan los porcentajes de ocupación por sexo (columnas)
+```{r, warning=FALSE}
+ocupacion.sexo$porc.mujer <- 100*ocupacion.sexo$mujer/3104942
+ocupacion.sexo$porc.hombre <- 100*ocupacion.sexo$hombre/4094196
+
+### Repetir paso 3
+print(ocupacion.sexo)  
+```
+
+B. Mejorar la tabla: limitar cantidad de decimales
+```{r, warning=FALSE}
+ocupacion.sexo$porc.mujer <- round(ocupacion.sexo$porc.mujer, digits=2)
+ocupacion.sexo$porc.hombre <- round(ocupacion.sexo$porc.hombre, digits=2)
+
+### Repetir paso 3
+print(ocupacion.sexo) 
+
+
+```
+
+##### NOTA: En la sesión 03 revisaremos el código de importación de datos que se revisa en el video.
+
+
+## MÓDULO 2. VISUALIZACIÓN DE DATOS: TABLAS Y GRÁFICOS  
+
+### PASO 5. PRESENTACIÓN DE TABLAS
+Vamos a utilizar el paquete "kableExtra()". Si arroja error, verificar instalación o ejecutar "install.packages("kableExtra")"
+```{r, warning=FALSE}
+library(kableExtra)
+ocupacion.sexo %>% 
+  kable() %>%
+  kable_styling()
+```
+
+### PASO 6. PERSONALIZACION DE TABLAS
+Cambiemos el nombre de las columnas
+```{r, warning=FALSE}
+#Este código ha sido puesto como texto, para permitir la exportación html
+#ocupacion.sexo %>% 
+  #kable(col.names = c("Grupo ocupacional","Mujer","Hombre")) %>%
+  #kable_styling()
+```
+
+**Error???** Paciencia, la vas a necesitar. Faltaban los nombres para las columnas de %
+```{r, warning=FALSE}
+ocupacion.sexo %>% 
+  kable(col.names = c("Grupo ocupacional","Mujer","Hombre","% Mujer","% Hombre")) %>%
+  kable_styling()
+```
+
+Cambiemos el formato de la tabla
+```{r, warning=FALSE}
+ocupacion.sexo %>% 
+  kable(col.names = c("Grupo ocupacional","Mujer","Hombre","% Mujer","% Hombre")) %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left", font_size = 11)
+```
+
+### PASO 7. GRÁFICOS: INTRODUCCIÓN A GGPLOT
+
+A. GRÁFICOS DE PIE O TORTA 
+
+> ¡S E C C I Ó N   
+E L I M I N A D A!  
+LAS TORTAS SON PARA LOS CUMPLEAÑOS! 
+
+- Hay mucha info al respecto. Acá un artículo para comenzar: https://www.elartedepresentar.com/2011/11/las-tartas-son-para-el-postre-5-razones-por-las-que-no-uso-graficos-circulares/)
+
+- Sugiero usar alternativas como barras, treemaps... **o waffles!** (https://nsaunders.wordpress.com/2017/09/08/infographic-style-charts-using-the-r-waffle-package/)
+
+```{r, echo=FALSE}
+waffle <- "https://nsaunders.files.wordpress.com/2017/09/waffle1.png"
+```
+
+<center><img src="`r waffle`"></center>
+
+B. GRÁFICOS DE BARRA
+```{r, warning=FALSE}
+barplot(ocupacion.sexo$mujer,main="Categoría ocupacional de las mujeres en Chile 2019",xlab="")
+barplot(ocupacion.sexo$mujer,main="Categoría ocupacional de las \n mujeres en Chile 2019",xlab="",
+        names.arg=ocupacion.sexo$"grupo.ocupacion", cex.axis=0.7, cex.names=0.5)
+```
+
+C. EL PAQUETE "ggplot2()" PERMITE CREAR GRÁFICOS DE TODO TIPO, CON MÚLTIPLES OPCIONES DE CONFIGURACIÓN Y PERSONALIZACIÓN.
+```{r, warning=FALSE}
+library(ggplot2)
+ggplot(ocupacion.sexo,aes(x=factor(grupo.ocupacion), y=porc.mujer))+
+  geom_bar(position="dodge", stat = "identity", width = 0.7) 
+
+```
+
+D. TÍTULOS, SUBTÍTULOS Y NOTAS
+```{r, warning=FALSE}
+ggplot(ocupacion.sexo,aes(x=factor(grupo.ocupacion), y=porc.mujer))+
+  geom_bar(position="dodge", stat = "identity", width = 0.7) +
+  labs(  x="", y="",
+         title="Gráfico 1. Categoría ocupacional de \n las mujeres en Chile 2019", 
+         subtitle="Un subtítulo",
+         caption= "Fuente: INE (2019)")
+```
+
+E. TIENE SENTIDO GRAFICAR LA BARRA DE TOTAL? PARA ELIMINARLA, HACER SUBSET [FILAS, COLUMNAS]
+```{r, warning=FALSE}
+ocupacion.sexo2 <- ocupacion.sexo[-11,]
+```
+
+F. AGREGAR ETIQUETAS DE VALOR Y CAMBIAR COLOR (VES ALGÚN CAMBIO EN EL EJE Y??) 
+```{r, warning=FALSE}
+ggplot(ocupacion.sexo2,aes(x=factor(grupo.ocupacion), y=porc.mujer))+
+  geom_bar(position="dodge", stat = "identity", width = 0.7, fill="red") +
+  labs(  x="", y="",
+         title="Gráfico 1. Categoría ocupacional de \n las mujeres en Chile 2019", 
+         subtitle="Un subtítulo",
+         caption= "Fuente: INE (2019)")  +
+  geom_text(data=ocupacion.sexo2, aes(y=porc.mujer, label=paste0(porc.mujer,"%")),
+            position=position_dodge(width = 0.7), vjust=-0.6, size=2.5, fontface="bold", show.legend=FALSE) 
+```
+
+G. PODEMOS CONFIGURAR DISTINTOS ASPECTOS DEL FORMATO (TIPO Y TAMAÑO LETRA, ETC) CON LA FUNCIÓN "theme()"
+
+PODEMOS REAJUSTAR LA ESCALA DEL EJE Y, PARA REPRESENTAR CORRECTAMENTE EL % CON "coord_cartesian()" 
+```{r, warning=FALSE}
+ggplot(ocupacion.sexo2,aes(x=factor(grupo.ocupacion), y=porc.mujer)) +
+  geom_bar(position="dodge", stat = "identity", width = 0.7, fill="red") +
+  labs(  x="", y="",
+         title="Gráfico 1. Categoría ocupacional de \n las mujeres en Chile 2019", 
+         subtitle="Un subtítulo",
+         caption= "Fuente: INE (2019)")  +
+  geom_text(data=ocupacion.sexo2, aes(y=porc.mujer, label=paste0(porc.mujer,"%")),
+            position=position_dodge(width = 0.7), vjust=-0.6, size=2.5, fontface="bold", show.legend=FALSE) +
+  coord_cartesian(ylim = c(0, 100)) +
+  theme(plot.title = element_text(size = 10, face = "bold", hjust = 0.5),
+        legend.position="top", legend.title = element_blank(),legend.text = element_text(size=7),
+        axis.text.x = element_text(size=6), axis.text.y=element_text(size=9),
+        rect = element_rect(fill = "transparent"), 
+        panel.background = element_rect(colour = 'transparent'),
+        plot.background = element_rect(fill = "transparent", color = NA),
+        legend.key.size = unit(0.7,"line"),
+        plot.subtitle=element_text(size=8, face = "italic"))
+```
+
+H. PUEDES LEER LAS ETIQUETAS? PODEMOS INSERTAR UNA FUNCIÓN PARA SEPARAR CADA PALABRA EN UNA FILA DISTINTA () 
+```{r, warning=FALSE}
+addline_format <- function(x,...){
+  gsub('\\s','\n',x)
+}
+```
+
+I. ACORTAR ETIQUETAS UTILIZANDO LA FUNCIÓN "addline_format" QUE ACABAMOS DE CREAR
+
+GIRAR EL GRÁFICO CON "coord_flip()"
+
+COMO GIRAMOS EL GRÁFICO, CAMBIAR "vjust" por "hjust" EN "geom_text()"
+```{r, warning=FALSE}
+ggplot(ocupacion.sexo2,aes(x=factor(grupo.ocupacion), y=porc.mujer))+
+  geom_bar(position="dodge", stat = "identity", width = 0.7, fill="red") +
+  labs(  x="", y="",
+         title="Gráfico 1. Categoría ocupacional de \n las mujeres en Chile 2019", 
+         subtitle="Un subtítulo",
+         caption= "Fuente: INE (2019)")  +
+  geom_text(data=ocupacion.sexo2, aes(y=porc.mujer, label=paste0(porc.mujer,"%")),
+            position=position_dodge(width = 0.7), hjust=-0.2, size=2.5, fontface="bold", show.legend=FALSE) +
+  coord_cartesian(ylim = c(0, 100)) +
+  theme(plot.title = element_text(size = 10, face = "bold", hjust = 0.5),
+        legend.position="top", legend.title = element_blank(),legend.text = element_text(size=7),
+        axis.text.x = element_text(size=6), axis.text.y=element_text(size=6),
+        rect = element_rect(fill = "transparent"), 
+        panel.background = element_rect(colour = 'transparent'),
+        plot.background = element_rect(fill = "transparent", color = NA),
+        legend.key.size = unit(0.7,"line"),
+        plot.subtitle=element_text(size=8, face = "italic")) +
+  coord_flip() +
+ scale_x_discrete(breaks=unique(ocupacion.sexo2$grupo.ocupacion),
+                  labels=addline_format(c("Poder Ejecutivo", "Profesionales y Científicos", 
+                        "Técnicos y Profesionales","Empleados Oficina", "Servicios",
+                        "Agricultores","Artes Mecánicas",
+                        "Operadores y Montadores","No Calificados", "Otros")))
+```
+
+
+## MÓDULO 3. ANÁLISIS DE DATOS: IMPORTACIÓN, EXPORTACIÓN Y ESTADÍSTICOS DESCRIPTIVOS
+### PASO 8. IMPORTAR DATOS 
+Vamos a usar un archivo online, pero si tienen un archivo en su computador, pueden usar alguna de las siguientes sintaxis. 
+
+A. Archivos locales (*sólo como referencia*)
+```{r, warning=FALSE}
+#CSV
+### especificar ruta local donde guardó su archivo. "header" indica q los datos tienen encabezado y "sep" especifica el separador (en este caso, punto y coma)
+#buenviviR <- read.csv("/Usuario/carpeta/subcarpeta/buenviviR.csv",header=TRUE, sep=";")
+#View(buenviviR)
+
+#Para archivo excel:
+#library(readxl)
+#buenviviR <- read_excel("/Usuario/carpeta/subcarpeta/buenviviR.xlsx")
+
+#Para archivo SPSS:
+#library(haven)
+#buenviviR <- read_sav(""/Usuario/carpeta/subcarpeta/buenviviR.sav")
+```
+
+**B. Archivos online**
+```{r, warning=FALSE}
+buenviviR <- read.csv(url("https://raw.githubusercontent.com/danielquinterosr/buenviviR/master/buenviviR.csv"), header=TRUE, sep=";")
+```
+
+### BONUS: Simplificar los nombres de la variables (ayuda para recordar mejor y escribir menos)
+```{r, warning=FALSE}
+buenviviR$edad <- buenviviR$P4...Cuántos.años.cumpliste.en.tu.último.cumpleaños.
+buenviviR$sexo <- buenviviR$P5..Sexo
+buenviviR$area <- buenviviR$P1..Área.disciplinar..principal.
+```
+
+### PASO 9. EXPLORAR EL ARCHIVO DE DATOS
+```{r, warning=FALSE}
+#### a) Tipo de objeto (pueden hacerlo para cada uno de los objetos que vayan creando)
+class(buenviviR)
+
+#### b) Variables que contiene (sólo para data.frame)
+names(buenviviR)
+
+#### c) Cantidad de columnas (variables) (sólo para data.frame)
+ncol(buenviviR)
+
+#### d) Cantidad de filas (casos) (sólo para data.frame)
+nrow(buenviviR)
+
+#### e) Cantidad de filas y columnas (sólo para data.frame)
+dim(buenviviR)
+
+#### f) Información sobre las variables (sólo para data.frame). Función muy recomendable para conocer la estructura del archivo de datos.
+str(buenviviR)
+```
+
+
+### PASO 10. EXPORTAR LOS DATOS
+
+```{r, warning=FALSE}
+#CSV
+### write.csv2(buenviviR,"/Usuario/carpeta/subcarpeta/buenviviR.csv", row.names = TRUE, fileEncoding = "UTF-8") #UTF-8 permite reconocer acentos y caracteres específicos del castellano, como la Ñ
+
+#SPSS (SAV)
+##library(haven)
+### write_sav(buenviviR, "buenviviR.sav")
+```
+
+### PASO 11. EXPLORAR LOS DATOS: ESTADÍSTICOS DESCRIPTIVOS
+A. VECTORES (*intervalo o razón*)
+```{r, warning=FALSE}
+#### a) Media (vectores)
+mean(buenviviR$edad)
+
+#### b) Mediana (vectores)
+median(buenviviR$edad)
+
+#### c) Moda: Como Rbase no contiene una sintaxis específica para obtener la moda, es posible crear una función para calcularla.
+getmode <- function(v) {
+  uniqv <- unique(v)
+  uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
+#### Luego, calcula la moda usando la función creada:
+getmode(buenviviR$edad)
+```
+
+B. FACTORES (*ordinal o nominal*)
+```{r, warning=FALSE}
+#### d) Tablas de frecuencias absolutas (factores)
+
+table(buenviviR$area)
+table(buenviviR$sexo)
+
+#### e) Tablas de frecuencias relativas (factores)
+
+prop.table(table(buenviviR$area))
+prop.table(table(buenviviR$sexo))
+```
+
+
+## EJEMPLO 1: Área disciplinar por sexo con ***dplyr()**, **kableExtra** y **ggplot2()***
+Veamos cuáles son las áreas disciplinares de quienes se registraron en el taller, según sexo.
+
+A. Para crear un subconjunto de datos que podamos utilizar posteriormente, podemos utilizar **dplyr()**
+```{r, warning=FALSE}
+library(dplyr)
+area.sexo <- buenviviR %>%
+group_by(area,sexo) %>%
+summarise(n=n()) %>%
+group_by(sexo) %>%
+mutate(perc=100*n/sum(n))
+area.sexo$perc <- round(area.sexo$perc, digits=2) #redondea la columna % y limita a 2 decimales
+```
+
+B. Podemos ver la cantidad y porcentaje por área disciplinar, según sexo. 
+```{r, warning=FALSE}
+area.sexo %>% 
+  kable(col.names = c("Área disciplinar","Sexo","N","%")) %>%
+  kable_styling(bootstrap_options = "striped", full_width = TRUE, position = "left", font_size = 11)
+```
+
+C. Podemos graficar la tabla anterior, con los mismos datos, usando **ggplot2()**
+```{r, warning=FALSE}
+library(ggplot2)
+graf2 <- ggplot(area.sexo,aes(x=factor(area), y=perc, fill=sexo))+
+  geom_bar(position="dodge", stat = "identity", width = 0.7) + #en lugar de especificar un color, agregamos "fill=sexo"
+  labs(  x="", y="",
+         title="Gráfico 2. Área disciplinar de participantes del taller, según sexo", 
+         subtitle="Cuestionario de Inscripición: Introducción al uso de R en Ciencias Sociales",
+         caption= "Fuente: Elaboración propia en base a registro de participantes del taller")  +
+  geom_text(data=area.sexo, aes(y=perc, label=paste0(perc,"%","\n (",n,")")),
+            position=position_dodge(width = 0.7), vjust=-0.6, size=2.5, fontface="bold", show.legend=FALSE) + 
+  coord_cartesian(ylim = c(0, 100)) +
+  theme(plot.title = element_text(size = 10, face = "bold", hjust = 0.5),
+        legend.position="top", legend.title = element_blank(),legend.text = element_text(size=7),
+        axis.text.x = element_text(size=8), axis.text.y=element_text(size=6),
+        rect = element_rect(fill = "transparent"), 
+        panel.background = element_rect(colour = 'transparent'),
+        plot.background = element_rect(fill = "transparent", color = NA),
+        legend.key.size = unit(0.7,"line"),
+        plot.subtitle=element_text(size=8, face = "italic")) +
+ scale_x_discrete(breaks=unique(area.sexo$area),
+                  labels=addline_format(c("Otras áreas disciplinares","Otras Ciencias Sociales","Psicología","Sociología","Trabajo Social")))
+
+print(graf2)
+```
+
+## EJEMPLO 2: Gráficos para escalas likert con **likert()**
+
+```{r, warning=FALSE}
+#Simplificar nombres
+buenviviR$habilidad.matematicas <- factor(buenviviR$P2..De.muy.malo..1..a.muy.bueno..7...como.evaluarías.tus.habilidades.y.o.conocimientos.en.las.siguientes.áreas...Resolver.operaciones.matemáticas., levels = c("1. Muy malo","2","3","4","5","6","7. Muy bueno"))
+
+buenviviR$habilidad.tablasygraficos <- factor(buenviviR$P2..De.muy.malo..1..a.muy.bueno..7...como.evaluarías.tus.habilidades.y.o.conocimientos.en.las.siguientes.áreas...Interpretar.tablas.y.gráficos., levels = c("1. Muy malo","2","3","4","5","6","7. Muy bueno"))
+
+buenviviR$habilidad.estadistica <- factor(buenviviR$P2..De.muy.malo..1..a.muy.bueno..7...como.evaluarías.tus.habilidades.y.o.conocimientos.en.las.siguientes.áreas...Estadística.y.probabilidades., levels = c("1. Muy malo","2","3","4","5","6","7. Muy bueno"))
+
+buenviviR$habilidad.programacion <- factor(buenviviR$P2..De.muy.malo..1..a.muy.bueno..7...como.evaluarías.tus.habilidades.y.o.conocimientos.en.las.siguientes.áreas...Lenguajes.de.programación..R..SQL..Python..etc..., levels = c("1. Muy malo","2","3","4","5","6","7. Muy bueno"))
+
+buenviviR$habilidad.diseño <- factor(buenviviR$P2..De.muy.malo..1..a.muy.bueno..7...como.evaluarías.tus.habilidades.y.o.conocimientos.en.las.siguientes.áreas...Diseño.de.Investigación., levels = c("1. Muy malo","2","3","4","5","6","7. Muy bueno"))
+
+buenviviR$habilidad.spss <- factor(buenviviR$P2..De.muy.malo..1..a.muy.bueno..7...como.evaluarías.tus.habilidades.y.o.conocimientos.en.las.siguientes.áreas...Nivel.de.uso.de.SPSS., levels = c("1. Muy malo","2","3","4","5","6","7. Muy bueno"))
+
+buenviviR$habilidad.excel <- factor(buenviviR$P2..De.muy.malo..1..a.muy.bueno..7...como.evaluarías.tus.habilidades.y.o.conocimientos.en.las.siguientes.áreas...Nivel.de.uso.de.excel., levels = c("1. Muy malo","2","3","4","5","6","7. Muy bueno"))
+
+#recodificar valores
+#buenviviR[buenviviR=="1. Muy malo"] <- 1
+#buenviviR[buenviviR=="7. Muy bueno"] <- 7
+
+## Crear conjunto de datos
+habilidad <- subset(buenviviR, select =c(habilidad.excel,habilidad.spss,habilidad.programacion,habilidad.estadistica,habilidad.tablasygraficos,habilidad.matematicas,habilidad.diseño))
+```
+
+Vamos a utilizar una paleta de colores (SunsetDark) amigable para personas con daltonismo. Sugiero siempre considerar estos detalles en sus gráficos, para lo cual recomiendo ver todas las opciones disponibles del paquete rcartocolors():
+
+*library(rcartocolor)*
+*display_carto_all(colorblind_friendly = TRUE)*
+
+```{r, warning=FALSE}
+library(likert)
+titulo <- "Gráfico 3. Habilidades o competencias de participantes \n de taller, según área disciplinar"
+niveles <- c("1. Muy malo","2","3","4","5","6","7. Muy bueno")
+paletalikert <- c("#4b2991", "#872ca2", "#c0369d", "#ea4f88", "#fa7876", "#f6a97a", "#edd9a3")
+paletalikert2 <- c("#fcde9c", "#faa476", "#f0746e", "#e34f6f", "#dc3977", "#b9257a", "#7c1d6f")
+
+names(habilidad) = c("Uso de Excel","Uso de SPSS","Lenguaje de programación (R, SQL, Python, otros)","Estadística y probabilidades","Interpretar tablas y gráficos","Resolver operaciones matemáticas","Diseño de Investigación")
+
+likert8 <- likert(habilidad, grouping=factor(buenviviR$area,levels = c("Otras áreas disciplinares","Otras Ciencias Sociales","Psicología","Sociología","Trabajo Social")))
+likert8g <- likert(summary = likert8$results, grouping = likert8$results[,1])
+likert8g <- likert(summary = likert8g$results[-c(2)])
+likert8g <- likert(summary = subset(likert8g$results, select = -c(Group)),grouping = likert8$results[,1])
+
+knitr::opts_chunk$set(fig.height = knitr::opts_chunk$get('fig.height')*2)
+
+graf3 <- plot(likert8g,plot.percent.neutral = TRUE,include.center = TRUE,plot.percents=TRUE,text.color = "black",plot.percent.low = TRUE, plot.percent.high = TRUE) + 
+  ggtitle(titulo) + 
+  scale_fill_manual(values=paletalikert2, breaks=likert8g$levels, labels=likert8g$levels, guide = guide_legend(reverse = TRUE)) +
+  theme(legend.title = element_blank(),
+        legend.key.size = unit(0.6,"line"),
+        legend.position="right",
+        plot.subtitle=element_text(size=8, face = "italic",color = "#6b6e6c"),
+        strip.text=element_text(size=7),
+        axis.text = element_text(size=7),
+        legend.text = element_text(size = rel(0.9))) + 
+  labs(y="", subtitle = '\n De muy malo a muy bueno ¿como evaluarías tus habilidades y/o conocimientos en las siguientes áreas  \n \n (1. Muy malo)                                                                                                                    (7. Muy bueno)')
+
+ggsave(graf3, filename = "graf3.png",  bg = "transparent",width = 20, height = 25, units = "cm")
+```
+![](/Users/danielquinterosr/Google Drive/UNAP/Cursos/Estadistica/Clases R/graf3.png)
+
+> Fin de la sesión. Cualquier consultar escribir a @danielquinterosr@gmail.com.
+¡Hasta pronto!
