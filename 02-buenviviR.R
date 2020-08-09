@@ -6,7 +6,7 @@
 
 
 ## VAMOS A COMENZAR DESDE CERO... ELIMINEMOS LOS OBJETOS CREADOS
-rm(grupo.ocupacion,hombre,mujer,ocupacion.sexo)
+rm(list=(ls)())
 
 
 # PASO 5. PRESENTACIÓN DE TABLAS
@@ -16,10 +16,10 @@ ocupacion.sexo %>%
   kable_styling()
 
 
-## Error? Calma, vamos a revisar y lo solucionamos.
+## Error??? Bienvenidxs a R!
 
 ## PARA EVITAR CARGAR TODO EL CÓDIGO NUEVAMENTE, PODEMOS EJECUTAR EL SCRIPT "01-buenviviR.R"
-source("01-buenviviR.R")
+source("01-buenviviR.R") ## Para evitar que abra nuevas pestañas, depurar el código original... eliminar View() (fila 24).
 
 ## Ahora si podemos correr la tabla nuevamente (no es necesario volver a cargar "kableExtra()").
 ocupacion.sexo %>% 
@@ -34,7 +34,7 @@ ocupacion.sexo %>%
   kable(col.names = c("Grupo ocupacional","Mujer","Hombre")) %>%
   kable_styling()
 
-## Error? Vamos a revisar.
+## Error otra vez??? Paciencia, la vas a necesitar. Faltaban los nombres para las columnas de %
 ocupacion.sexo %>% 
   kable(col.names = c("Grupo ocupacional","Mujer","Hombre","% Mujer","% Hombre")) %>%
   kable_styling()
@@ -47,20 +47,21 @@ ocupacion.sexo %>%
 
 # PASO 7. INTRODUCCIÓN A GGPLOT
 
-## GRÁFICOS DE PIE O TORTA - SECCIÓN ELIMINADA
-## LAS TORTAS SON PARA LOS CUMPLEAÑOS! (https://www.elartedepresentar.com/2011/11/las-tartas-son-para-el-postre-5-razones-por-las-que-no-uso-graficos-circulares/)
+## A) GRÁFICOS DE PIE O TORTA 
+## S E C C I Ó N   E L I M I N A D A ... LAS TORTAS SON PARA LOS CUMPLEAÑOS! Sugiero usar alternativas como barras, treemaps... o waffles! (https://nsaunders.wordpress.com/2017/09/08/infographic-style-charts-using-the-r-waffle-package/)
+## Hay mucha info al respecto. Acá un artículo para comenzar: https://www.elartedepresentar.com/2011/11/las-tartas-son-para-el-postre-5-razones-por-las-que-no-uso-graficos-circulares/)
 
-## GRÁFICOS DE BARRA
+## B) GRÁFICOS DE BARRA
 barplot(ocupacion.sexo$mujer,main="Categoría ocupacional de las mujeres en Chile 2019",xlab="")
 barplot(ocupacion.sexo$mujer,main="Categoría ocupacional de las \n mujeres en Chile 2019",xlab="",
-        names.arg=ocupacion.sexo$"grupo.ocupacion", cex.axis=1.5, cex.names=0.5)
+        names.arg=ocupacion.sexo$"grupo.ocupacion", cex.axis=0.7, cex.names=0.5)
 
-## PARA SEGUIR EDITANDO EL GRÁFICO, UTILIZAR "ggplot2()"
+## C) EL PAQUETE "ggplot2()" PERMITE CREAR GRÁFICOS DE TODO TIPO, CON MÚLTIPLES OPCIONES DE CONFIGURACIÓN Y PERSONALIZACIÓN.
 library(ggplot2)
 ggplot(ocupacion.sexo,aes(x=factor(grupo.ocupacion), y=porc.mujer))+
   geom_bar(position="dodge", stat = "identity", width = 0.7) 
 
-## TÍTULOS, SUBTÍTULOS Y NOTAS
+## D) TÍTULOS, SUBTÍTULOS Y NOTAS
 ggplot(ocupacion.sexo,aes(x=factor(grupo.ocupacion), y=porc.mujer))+
   geom_bar(position="dodge", stat = "identity", width = 0.7) +
   labs(  x="", y="",
@@ -68,9 +69,10 @@ ggplot(ocupacion.sexo,aes(x=factor(grupo.ocupacion), y=porc.mujer))+
          subtitle="Un subtítulo",
          caption= "Fuente: INE (2019)")
 
-## 
+## E) TIENE SENTIDO GRAFICAR LA BARRA DE TOTAL? PARA ELIMINARLA, HACER SUBSET [FILAS, COLUMNAS]
 ocupacion.sexo2 <- ocupacion.sexo[-11,]
 
+## F) AGREGAR ETIQUETAS DE VALOR Y CAMBIAR COLOR (VES ALGÚN CAMBIO EN EL EJE Y??) 
 ggplot(ocupacion.sexo2,aes(x=factor(grupo.ocupacion), y=porc.mujer))+
   geom_bar(position="dodge", stat = "identity", width = 0.7, fill="red") +
   labs(  x="", y="",
@@ -80,10 +82,9 @@ ggplot(ocupacion.sexo2,aes(x=factor(grupo.ocupacion), y=porc.mujer))+
   geom_text(data=ocupacion.sexo2, aes(y=porc.mujer, label=paste0(porc.mujer,"%")),
             position=position_dodge(width = 0.7), vjust=-0.6, size=2.5, fontface="bold", show.legend=FALSE) 
   
-
-
-## 
-ggplot(ocupacion.sexo2,aes(x=factor(grupo.ocupacion), y=porc.mujer))+
+## G) PODEMOS CONFIGURAR DISTINTOS ASPECTOS DEL FORMATO (TIPO Y TAMAÑO LETRA, ETC) CON LA FUNCIÓN "theme()"
+## PODEMOS REAJUSTAR LA ESCALA DEL EJE Y, PARA REPRESENTAR CORRECTAMENTE EL % CON "coord_cartesian()" 
+ggplot(ocupacion.sexo2,aes(x=factor(grupo.ocupacion), y=porc.mujer)) +
   geom_bar(position="dodge", stat = "identity", width = 0.7, fill="red") +
   labs(  x="", y="",
          title="Gráfico 1. Categoría ocupacional de \n las mujeres en Chile 2019", 
@@ -99,14 +100,17 @@ ggplot(ocupacion.sexo2,aes(x=factor(grupo.ocupacion), y=porc.mujer))+
         panel.background = element_rect(colour = 'transparent'),
         plot.background = element_rect(fill = "transparent", color = NA),
         legend.key.size = unit(0.7,"line"),
-        plot.subtitle=element_text(size=8, face = "italic")) +
-  coord_flip()
+        plot.subtitle=element_text(size=8, face = "italic"))
 
 
+## H) PUEDES LEER LAS ETIQUETAS? PODEMOS INSERTAR UNA FUNCIÓN PARA SEPARAR CADA PALABRA EN UNA FILA DISTINTA () 
 addline_format <- function(x,...){
   gsub('\\s','\n',x)
 }
 
+## I) ACORTAR ETIQUETAS UTILIZANDO LA FUNCIÓN "addline_format" QUE ACABAMOS DE CREAR
+## GIRAR EL GRÁFICO CON "coord_flip()"
+## COMO GIRAMOS EL GRÁFICO, CAMBIAR "vjust" por "hjust" EN "geom_text()"
 ggplot(ocupacion.sexo2,aes(x=factor(grupo.ocupacion), y=porc.mujer))+
   geom_bar(position="dodge", stat = "identity", width = 0.7, fill="red") +
   labs(  x="", y="",
@@ -114,7 +118,7 @@ ggplot(ocupacion.sexo2,aes(x=factor(grupo.ocupacion), y=porc.mujer))+
          subtitle="Un subtítulo",
          caption= "Fuente: INE (2019)")  +
   geom_text(data=ocupacion.sexo2, aes(y=porc.mujer, label=paste0(porc.mujer,"%")),
-            position=position_dodge(width = 0.7), vjust=-0.6, size=2.5, fontface="bold", show.legend=FALSE) +
+            position=position_dodge(width = 0.7), vjust=-0.6, size=2.5, fontface="bold", show.legend=FALSE) + #cambiar "hjust=-0.2"
   coord_cartesian(ylim = c(0, 100)) +
   theme(plot.title = element_text(size = 10, face = "bold", hjust = 0.5),
         legend.position="top", legend.title = element_blank(),legend.text = element_text(size=7),
@@ -129,4 +133,4 @@ ggplot(ocupacion.sexo2,aes(x=factor(grupo.ocupacion), y=porc.mujer))+
                   labels=addline_format(c("Poder Ejecutivo", "Profesionales y Científicos", 
                         "Técnicos y Profesionales","Empleados Oficina", "Servicios",
                         "Agricultores","Artes Mecánicas",
-                        "Operadores y Montadores","No Calificados", "Otros")))
+                        "Operadores y Montadores","No Calificados", "Otros"))) ## FUNCIÓN CREADA EN FILA 107

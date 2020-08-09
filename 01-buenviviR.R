@@ -7,7 +7,11 @@
 # PASO 1. VARIABLES 
 ## Crear las variables a incluir en nuestra tabla de datos: Grupo ocupacional, Mujer y Hombre.
 
-grupo.ocupacion <- c("Miembros del Poder Ejecutivo", "Profesionales, Científicos e Intelectuales", "Técnicos y Profesionales de Nivel Medio","Empleados de Oficina", "Trabajadores de los Servicios","Agricultores y Trabajadores Calificados","Oficiales, Operarios y Artesanos de Artes Mecánicas","Operadores de Instalaciones y Máquinas y Montadores","Trabajadores no Calificados", "Otros no identificados","Total")
+grupo.ocupacion <- c("Miembros del Poder Ejecutivo", "Profesionales, Científicos e Intelectuales", 
+                     "Técnicos y Profesionales de Nivel Medio","Empleados de Oficina", "Trabajadores de los Servicios",
+                     "Agricultores y Trabajadores Calificados","Oficiales, Operarios y Artesanos de Artes Mecánicas",
+                     "Operadores de Instalaciones y Máquinas y Montadores","Trabajadores no Calificados", 
+                     "Otros no identificados","Total")
 mujer <- c(45615,417702,383275,433708,725169,54674,159689,55349,822600,7160,3104942)
 hombre <- c(140008,429077,411013,255745,342866,235392,830347,601922,797429,50397,4094196)
 
@@ -32,24 +36,8 @@ ocupacion.sexo$porc.hombre <- round(ocupacion.sexo$porc.hombre, digits=2)
 
 ## D. Repetir paso 3
 
-# PASO 5. IMPORTAR DATOS
 
-## A. Archivos locales
-library(readr)
-buenviviR <- read_csv("Inscripción taller \"Introducción al uso de R en Ciencias Sociales\".csv")
-View(buenviviR)
-
-#Para archivo excel:
-#library(readxl)
-#buenviviR <- read_excel("encuesta.interculturalidad.csv")
-
-#Para archivo SPSS:
-#install.packages("haven")
-#library(haven)
-#buenviviR <- read_sav("Base interculturalidad vars seleccionadas.sav")
+## NOTA: En la sesión 03 revisaremos el código de importación de datos que se revisa en el video.
 
 
-## B. Archivos online
-#buenviviR <- read.csv(
-#  url("https://raw.githubusercontent.com/danielquinterosr/IntroR/master/buenviviR.csv"), 
-#  header=TRUE, sep=";")
+
